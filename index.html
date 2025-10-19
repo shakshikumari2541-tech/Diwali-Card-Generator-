@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diwali Post Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #fdb833 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1400px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-section h1 {
+            color: #ff6b35;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #f7931e;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .theme-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .theme-btn {
+            padding: 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .theme-btn:hover {
+            border-color: #ff6b35;
+            background: #fff5f0;
+        }
+
+        .theme-btn.active {
+            background: #ff6b35;
+            color: white;
+            border-color: #ff6b35;
+        }
+
+        .category-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .category-btn {
+            padding: 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .category-btn:hover {
+            border-color: #f7931e;
+            background: #fffaf5;
+        }
+
+        .category-btn.active {
+            background: #f7931e;
+            color: white;
+            border-color: #f7931e;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-preview {
+            background: #ff6b35;
+            color: white;
+        }
+
+        .btn-preview:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-download {
+            background: #fdb833;
+            color: #333;
+        }
+
+        .btn-download:hover {
+            background: #f7931e;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(247, 147, 30, 0.3);
+        }
+
+        .btn-download:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Preview Section */
+        .preview-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .preview-section h2 {
+            color: #ff6b35;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .post-preview {
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            background: white;
+            display: none;
+        }
+
+        .post-preview.active {
+            display: block;
+        }
+
+        /* Theme 1: Classic Orange & White */
+        .theme-1 {
+            background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-1::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .theme-1::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -50%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .theme-1 .header {
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .theme-1 .diwali-text {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .theme-1 .name {
+            font-size: 42px;
+            font-weight: 900;
+            margin: 20px 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-1 .message {
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+            margin-top: 20px;
+        }
+
+        /* Theme 2: Dark Elegant */
+        .theme-2 {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .theme-2 .header {
+            font-size: 44px;
+            font-weight: 900;
+            color: #fdb833;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .theme-2 .diwali-text {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 15px;
+        }
+
+        .theme-2 .name {
+            font-size: 40px;
+            font-weight: 900;
+            margin: 20px 0;
+            color: #fdb833;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .theme-2 .message {
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.8;
+            margin-top: 20px;
+            color: #e0e0e0;
+        }
+
+        /* Theme 3: Gold & Cream */
+        .theme-3 {
+            background: linear-gradient(135deg, #f4e4c1 0%, #e8d4a8 100%);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            color: #333;
+            position: relative;
+        }
+
+        .theme-3 .header {
+            font-size: 44px;
+            font-weight: 900;
+            color: #ff6b35;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .theme-3 .diwali-text {
+            font-size: 32px;
+            font-weight: 700;
+            color: #d4a574;
+            margin-bottom: 15px;
+        }
+
+        .theme-3 .name {
+            font-size: 40px;
+            font-weight: 900;
+            margin: 20px 0;
+            color: #8b4513;
+        }
+
+        .theme-3 .message {
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.8;
+            margin-top: 20px;
+            color: #555;
+        }
+
+        .decorative-element {
+            font-size: 24px;
+            margin: 10px 0;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .post-preview {
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .theme-options,
+            .category-options {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .theme-1 .header {
+                font-size: 36px;
+            }
+
+            .theme-1 .name {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Form Section -->
+        <div class="form-section">
+            <h1>✨ Diwali Post Generator ✨</h1>
+
+            <div class="form-group">
+                <label for="personName">Person's Name</label>
+                <input type="text" id="personName" placeholder="Enter name..." value="">
+            </div>
+
+            <div class="form-group">
+                <label>Select Theme</label>
+                <div class="theme-options">
+                    <button class="theme-btn active" data-theme="1">🔥 Classic Orange</button>
+                    <button class="theme-btn" data-theme="2">🌙 Dark Elegant</button>
+                    <button class="theme-btn" data-theme="3">✨ Gold & Cream</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Select Category</label>
+                <div class="category-options">
+                    <button class="category-btn active" data-category="general">General</button>
+                    <button class="category-btn" data-category="lovers">Lovers</button>
+                    <button class="category-btn" data-category="family">Family</button>
+                    <button class="category-btn" data-category="friends">Friends</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="customMessage">Custom Message (Optional)</label>
+                <textarea id="customMessage" placeholder="Write your custom message here..."></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-preview" onclick="generatePreview()">👁️ Preview</button>
+                <button class="btn-download" id="downloadBtn" onclick="downloadPost()" disabled>⬇️ Download JPG</button>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="preview-section">
+            <h2>Post Preview</h2>
+            
+            <!-- Theme 1 -->
+            <div class="post-preview theme-1" id="preview-1">
+                <div class="header">Happy</div>
+                <div class="diwali-text">DIWALI</div>
+                <div class="decorative-element">🪔 🎆 🪔</div>
+                <div class="name" id="name-1">Name</div>
+                <div class="message" id="message-1">Wishing you joy and prosperity</div>
+            </div>
+
+            <!-- Theme 2 -->
+            <div class="post-preview theme-2" id="preview-2">
+                <div class="header">Happy</div>
+                <div class="diwali-text">DIWALI</div>
+                <div class="decorative-element">✨ 🎇 ✨</div>
+                <div class="name" id="name-2">Name</div>
+                <div class="message" id="message-2">Wishing you joy and prosperity</div>
+            </div>
+
+            <!-- Theme 3 -->
+            <div class="post-preview theme-3" id="preview-3">
+                <div class="header">Happy</div>
+                <div class="diwali-text">DIWALI</div>
+                <div class="decorative-element">🪔 💫 🪔</div>
+                <div class="name" id="name-3">Name</div>
+                <div class="message" id="message-3">Wishing you joy and prosperity</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedTheme = '1';
+        let selectedCategory = 'general';
+
+        // Default messages for each category
+        const categoryMessages = {
+            general: "Wishing you a Diwali filled with joy, light, and prosperity!",
+            lovers: "May this Diwali bring us closer and fill our hearts with eternal love and happiness.",
+            family: "May the light of Diwali bring happiness, health, and prosperity to our entire family.",
+            friends: "Celebrating the festival of lights with you! Wishing you endless joy and good times ahead."
+        };
+
+        // Theme button listeners
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedTheme = this.dataset.theme;
+            });
+        });
+
+        // Category button listeners
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedCategory = this.dataset.category;
+                
+                // Update message if custom message is empty
+                const customMsg = document.getElementById('customMessage');
+                if (customMsg.value.trim() === '') {
+                    customMsg.value = categoryMessages[selectedCategory];
+                }
+            });
+        });
+
+        function generatePreview() {
+            const name = document.getElementById('personName').value.trim() || 'Name';
+            const customMessage = document.getElementById('customMessage').value.trim() || categoryMessages[selectedCategory];
+
+            // Hide all previews
+            document.querySelectorAll('.post-preview').forEach(p => p.classList.remove('active'));
+
+            // Show selected theme
+            const previewId = `preview-${selectedTheme}`;
+            document.getElementById(previewId).classList.add('active');
+
+            // Update content
+            document.getElementById(`name-${selectedTheme}`).textContent = name;
+            document.getElementById(`message-${selectedTheme}`).textContent = customMessage;
+
+            // Enable download button
+            document.getElementById('downloadBtn').disabled = false;
+        }
+
+        async function downloadPost() {
+            const previewId = `preview-${selectedTheme}`;
+            const element = document.getElementById(previewId);
+            const name = document.getElementById('personName').value.trim() || 'diwali-post';
+
+            try {
+                const canvas = await html2canvas(element, {
+                    backgroundColor: null,
+                    scale: 2,
+                    logging: false
+                });
+
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/jpeg', 0.95);
+                link.download = `diwali-${name}-${Date.now()}.jpg`;
+                link.click();
+            } catch (error) {
+                alert('Error downloading image. Please try again.');
+                console.error(error);
+            }
+        }
+
+        // Initialize with default message
+        document.getElementById('customMessage').value = categoryMessages['general'];
+    </script>
+</body>
+</html>
